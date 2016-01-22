@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with HoloPy.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import division
+
 
 import tempfile
 import warnings
@@ -277,7 +277,7 @@ def test_fit_multisphere_noisydimer_slow():
     model = Model(parameters, Multisphere, make_scatterer=make_scatterer, alpha
     = Parameter(.99, [.1, 1.0], 'alpha'))
     result = fit(model, holo)
-    print result.scatterer
+    print(result.scatterer)
 
     gold = np.array([1.642e-5, 1.725e-5, 2.058e-5, 1e-5, 1.603, 6.857e-7,
                      1.758e-5, 1.753e-5, 2.127e-5, 1e-5, 1.603,

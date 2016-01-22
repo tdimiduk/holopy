@@ -21,7 +21,7 @@ Classes for defining models of scattering for fitting
 .. moduleauthor:: Thomas G. Dimiduk <tdimiduk@physics.harvard.edu>
 .. moduleauthor:: Jerome Fung <jfung@physics.harvard.edu>
 """
-from __future__ import division
+
 
 import inspect
 import numpy as np
@@ -111,7 +111,7 @@ class ParameterizedObject(Parametrization):
         # find all the Parameter's in the obj
         parameters = []
         ties = {}
-        for name, par in obj.parameters.iteritems():
+        for name, par in obj.parameters.items():
             def add_par(p, name):
                 if p in parameters:
                     # if the parameter is already in the parameters list, it
@@ -150,7 +150,7 @@ class ParameterizedObject(Parametrization):
     @property
     def guess(self):
         pars = self.obj.parameters
-        for key in pars.keys():
+        for key in list(pars.keys()):
             if hasattr(pars[key], 'guess'):
                 if isinstance(pars[key], ComplexParameter):
                     pars[key+'.real'] = pars[key].real.guess
@@ -162,10 +162,10 @@ class ParameterizedObject(Parametrization):
     def make_from(self, parameters):
         obj_pars = {}
 
-        for name, par in self.obj.parameters.iteritems():
+        for name, par in self.obj.parameters.items():
             # if this par is in a tie group, we need to work with its tie group
             # name since that will be what is in parameters
-            for groupname, group in self.ties.iteritems():
+            for groupname, group in self.ties.items():
                 if name in group:
                     name = groupname
 
@@ -241,7 +241,7 @@ class Model(HoloPyObject):
             scatterer = ParameterizedObject(scatterer)
         self.scatterer = scatterer
 
-        if isinstance(theory, basestring):
+        if isinstance(theory, str):
             import holopy.scattering.theory as theory_module
             kind, func = theory.split('.')
             theory = getattr(getattr(theory_module, kind), func)
@@ -287,8 +287,8 @@ class Model(HoloPyObject):
         theory = d['theory']
         # if the theory is something like Mie.calc_holo, rather than
         # Mie().calc_holo, we need to represent it differently
-        if isinstance(theory.im_class, type):
-            theory_class = theory.im_self.__name__
-            theory_func = theory.im_func.__name__
+        if isinstance(theory.__self__.__class__, type):
+            theory_class = theory.__self__.__name__
+            theory_func = theory.__func__.__name__
             d['theory'] = '.'.join((theory_class, theory_func))
         return d

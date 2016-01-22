@@ -24,7 +24,7 @@ functions.
 import os
 import glob
 from warnings import warn
-import serialize
+from  holopy.core.io import serialize
 from holopy.core.io.image_file_io import load_image, save_image
 
 from holopy.core.marray import Image, arr_like
@@ -59,7 +59,7 @@ def load(inf, spacing = None, optics = None):
     obj : The object loaded, :class:`holopy.core.marray.Image`, or as loaded from yaml
 
     """
-    if isinstance(optics, (basestring, file)):
+    if optics != None and not isinstance(optics, Optics):
         optics = serialize.load(optics)
         # In the past We allowed optics yamls to be written without an !Optics
         # tag, so for that backwards compatability, we attempt to turn an
@@ -113,7 +113,7 @@ def save(outf, obj):
     binary array is very slow for large arrays.  HoloPy can read these 'yaml'
     files, but any other yaml implementation will get confused.
     """
-    if isinstance(outf, basestring):
+    if isinstance(outf, str):
         filename, ext = os.path.splitext(outf)
         if ext in ['.tif', '.TIF', '.tiff', '.TIFF']:
             save_image(outf, obj)

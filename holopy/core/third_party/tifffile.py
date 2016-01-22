@@ -111,7 +111,7 @@ Examples
 
 """
 
-from __future__ import division
+
 
 import sys
 import os
@@ -367,13 +367,13 @@ class TIFFpage(object):
         tags = self.tags
         fd.seek(offset, 0)
         numtags = struct.unpack(byte_order+'H', fd.read(2))[0]
-        for i in xrange(numtags):
+        for i in range(numtags):
             tag = TIFFtag(fd, byte_order=byte_order)
             tags[tag.name] = tag
 
         # read custom tags
         pos = fd.tell()
-        for name, readtag in CUSTOM_TAGS.values():
+        for name, readtag in list(CUSTOM_TAGS.values()):
             if name in tags and readtag:
                 value = readtag(fd, byte_order, tags[name])
                 if isinstance(value, dict): # numpy.core.records.record
@@ -399,7 +399,7 @@ class TIFFpage(object):
         """
         tags = self.tags
 
-        for code, (name, default, dtype, count, validate) in TIFF_TAGS.items():
+        for code, (name, default, dtype, count, validate) in list(TIFF_TAGS.items()):
             if not (name in tags or default is None):
                 tags[name] = TIFFtag(code, dtype=dtype, count=count,
                                      value=default, name=name)
@@ -518,7 +518,7 @@ class TIFFpage(object):
                and self.bits_per_sample in (8, 16, 32, 64) \
                and all(strip_offsets[i] == \
                        strip_offsets[i+1]-strip_byte_counts[i]
-                       for i in xrange(len(strip_offsets)-1)):
+                       for i in range(len(strip_offsets)-1)):
                 strip_byte_counts = (strip_offsets[-1] - strip_offsets[0] +
                                      strip_byte_counts[-1], )
                 strip_offsets = (strip_offsets[0], )
@@ -723,7 +723,7 @@ class Record(dict):
         """Return string with information about all tags."""
         s = []
         lists = []
-        list_type = types.ListType
+        list_type = list
         for k in sorted(self):
             if k.startswith('_'):
                 continue
@@ -749,7 +749,7 @@ class TiffTags(Record):
         """Return string with information about all tags."""
         s = []
         sortbycode = lambda a, b: cmp(a.code, b.code)
-        for tag in sorted(self.itervalues(), sortbycode):
+        for tag in sorted(iter(self.values()), sortbycode):
             typecode = "%i%s" % (tag.count * int(tag.dtype[0]), tag.dtype[1])
             line = "* %i %s (%s) %s" % (tag.code, tag.name, typecode,
                                         str(tag.value).split('\n', 1)[0])
@@ -873,7 +873,7 @@ def _replace_by(module_function, warn=False):
             module, function = module_function.split('.')
             func, oldfunc = getattr(__import__(module), function), func
             globals()['__old_' + func.__name__] = oldfunc
-        except Exception, e:
+        except (Exception, e):
             if warn:
                 warnings.warn("Failed to import %s" % module_function)
         return func
@@ -950,7 +950,7 @@ def decodelzw(encoded):
         if code == 257: # EOI
             break
         if code == 256: # CLEAR
-            table = [chr(i) for i in xrange(256)]
+            table = [chr(i) for i in range(256)]
             table.extend((0, 0))
             lentable = 258
             bitw, shr, mask = switchbitch[255]
@@ -1038,7 +1038,7 @@ def unpackints(data, dtype, intsize, runlen=0):
     result = numpy.empty((l,), dtype)
 
     bitcount = 0
-    for i in xrange(len(result)):
+    for i in range(len(result)):
         start = bitcount // 8
         s = data[start:start+itembytes]
         try:
@@ -1074,14 +1074,14 @@ def test_tifffile(directory='testimages', verbose=True):
     start = time.time()
     for f in glob.glob(os.path.join(directory, '*.*')):
         if verbose:
-            print "\n%s>" % f.lower(),
+            print(("\n{}".format(f.lower())))
         t0 = time.time()
         try:
             tif = TIFFfile(f)
-        except Exception, e:
+        except (Exception, e):
             if not verbose:
-                print f,
-            print "ERROR:", e
+                print((f), end=' ')
+            print(("ERROR:", e))
             failed += 1
             continue
         try:
@@ -1089,20 +1089,20 @@ def test_tifffile(directory='testimages', verbose=True):
         except ValueError:
             try:
                 img = tif[0].asarray()
-            except Exception, e:
+            except (Exception, e):
                 if not verbose:
-                    print f,
-                print "ERROR:", e
+                    print(f)
+                print(("ERROR:", e))
         finally:
             tif.close()
         successful += 1
         if verbose:
-            print "%s, %s %s, %s, %.0f ms" % (str(tif), str(img.shape),
-                img.dtype, tif[0].compression, (time.time()-t0) * 1e3)
+            print(("{}, {} {}, {}, {.0f} ms".format(str(tif), str(img.shape),
+                img.dtype, tif[0].compression, (time.time()-t0) * 1e3)))
 
     if verbose:
-        print "\nSuccessfully read %i of %i files in %.3f s\n" % (
-            successful, successful+failed, time.time()-start)
+        print(("\nSuccessfully read {} of {{} files in {} s\n".format(
+            successful, successful+failed, time.time()-start)))
 
 
 # TIFF tag structures. Cases that are irrelevant or not implemented are
@@ -1892,8 +1892,8 @@ def imshow(data, title=None, isrgb=True, vmin=0, vmax=None,
 def main(argv=None):
     """Command line usage main function."""
     if float(sys.version[0:3]) < 2.5:
-        print "This script requires Python version 2.5 or better."
-        print "This is Python version %s" % sys.version
+        print("This script requires Python version 2.5 or better.")
+        print(("This is Python version {}".format(sys.version)))
         return 0
     if argv is None:
         argv = sys.argv
@@ -1944,14 +1944,14 @@ def main(argv=None):
         test_tifffile(path, settings.verbose)
         return 0
 
-    print "Reading file structure...",
+    print("Reading file structure...")
     start = time.time()
     tif = TIFFfile(path)
-    print "%.3f ms" % ((time.time()-start) * 1e3)
+    print(("{.3f} ms".format((time.time()-start) * 1e3)))
 
     img = None
     if not settings.noplot:
-        print "Reading image data... ",
+        print("Reading image data... ")
         start = time.time()
         try:
             if settings.page < 0:
@@ -1960,23 +1960,23 @@ def main(argv=None):
             else:
                 img = tif[settings.page].asarray(rgbonly=not settings.norgb,
                                             colormapped=not settings.nocolmap)
-            print "%.3f ms" % ((time.time()-start) * 1e3)
-        except ValueError, e:
-            print e #; raise
+            print("%.3f ms" % ((time.time()-start) * 1e3))
+        except ValueError as e:
+            print(e) #; raise
     tif.close()
 
-    print "\nTIFF file:", tif
+    print("\nTIFF file:", tif)
     page = 0 if settings.page < 0 else settings.page
-    print "\nPAGE %i:" % page, tif[page]
+    print("\nPAGE %i:" % page, tif[page])
     page = tif[page]
-    print page.tags
+    print(page.tags)
     if page.is_palette:
-        print "\nColor Map:", page.color_map.shape, page.color_map.dtype
+        print("\nColor Map:", page.color_map.shape, page.color_map.dtype)
 
     for attr in ('cz_lsm_info', 'cz_lsm_scan_info', 'mm_uic_tags',
                  'mm_header', 'nih_image_header'):
         if hasattr(page, attr):
-            print "\n", attr.upper(), "\n", Record(getattr(page, attr))
+            print("\n", attr.upper(), "\n", Record(getattr(page, attr)))
 
     if img is not None and not settings.noplot:
         imshow(img, title=', '.join((str(tif), str(tif[0]))),

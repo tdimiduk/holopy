@@ -26,7 +26,7 @@ analysis procedures.
 
 .. moduleauthor:: Tom Dimiduk <tdimiduk@physics.harvard.edu>
 """
-from helpers import OrderedDict
+from holopy.core.helpers import OrderedDict
 import inspect
 import numpy as np
 import yaml
@@ -41,11 +41,10 @@ class SerializableMetaclass(yaml.YAMLObjectMetaclass):
         cls.yaml_dumper.add_representer(cls, cls.to_yaml)
 
 
-class Serializable(yaml.YAMLObject):
+class Serializable(yaml.YAMLObject, metaclass=SerializableMetaclass):
     """
     Base class for any object that wants a nice clean yaml output
     """
-    __metaclass__ = SerializableMetaclass
 
     @classmethod
     def to_yaml(cls, dumper, data):
@@ -83,7 +82,7 @@ class HoloPyObject(Serializable):
         return cls(**fields)
 
     def __repr__(self):
-        keywpairs = ["{0}={1}".format(k[0], repr(k[1])) for k in self._dict.iteritems()]
+        keywpairs = ["{0}={1}".format(k[0], repr(k[1])) for k in self._dict.items()]
         return "{0}({1})".format(self.__class__.__name__, ", ".join(keywpairs))
 
     def __str__(self):
@@ -94,7 +93,7 @@ class HoloPyObject(Serializable):
 def ordered_dump(dumper, tag, data):
     value = []
     node = yaml.nodes.MappingNode(tag, value)
-    for key, item in data.iteritems():
+    for key, item in data.items():
         node_key = dumper.represent_data(key)
         node_value = dumper.represent_data(item)
         value.append((node_key, node_value))

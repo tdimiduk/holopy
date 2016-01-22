@@ -25,7 +25,7 @@ analysis procedures.
 
 .. moduleauthor:: Tom Dimiduk <tdimiduk@physics.harvard.edu>
 """
-from __future__ import division
+
 import numpy as np
 import yaml
 from yaml.reader import ReaderError
@@ -39,8 +39,8 @@ from holopy.core.marray import Marray
 from holopy.core import marray
 
 def save(outf, obj):
-    if isinstance(outf, basestring):
-        outf = file(outf, 'wb')
+    if isinstance(outf, str):
+        outf = open(outf, 'wb')
 
     yaml.dump(obj, outf)
     if isinstance(obj, Marray):
@@ -54,8 +54,8 @@ def save(outf, obj):
 
 
 def load(inf):
-    if isinstance(inf, basestring):
-        inf = file(inf, mode = 'rU')
+    if isinstance(inf, str):
+        inf = open(inf, mode = 'r')
 
     line = inf.readline()
     cls = line.strip('{} !\n')
@@ -79,7 +79,7 @@ def load(inf):
             # sometimes yaml doesn't convert strings to floats properly, so we
             # have to check for that.
             for key in obj:
-                if isinstance(obj[key], basestring):
+                if isinstance(obj[key], str):
                     try:
                         obj[key] = float(obj[key])
                     except ValueError: #pragma: nocover
@@ -97,9 +97,9 @@ def ignore_aliases(data):
         # numpy arrays no longer want to be compared to None, so instead check for a none by looking for if it is an instance of NoneType
         if is_none(data) or data is ():
             return True
-        if isinstance(data, (str, unicode, bool, int, float)):
+        if isinstance(data, (str, bool, int, float)):
             return True
-    except TypeError, e:
+    except (TypeError, e):
         pass
 yaml.representer.SafeRepresenter.ignore_aliases = \
     staticmethod(ignore_aliases)
@@ -153,15 +153,15 @@ def class_loader(loader, node):
     for t in tok[1:]:
         mod = mod.__getattribute__(t)
     return mod
-yaml.add_constructor(u'!class', class_loader)
+yaml.add_constructor('!class', class_loader)
 
 def OrderedDict_representer(dumper, data):
     return dumper.represent_dict(data)
 yaml.add_representer(OrderedDict, OrderedDict_representer)
 
 def instancemethod_representer(dumper, data):
-    func = data.im_func.func_name
-    obj = data.im_self
+    func = data.__func__.__name__
+    obj = data.__self__
     if isinstance(obj, SerializableMetaclass):
         obj = obj()
     rep = yaml.dump(obj)

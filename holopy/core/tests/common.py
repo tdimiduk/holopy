@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with HoloPy.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import division
+
 
 import numpy as np
 import tempfile
@@ -56,7 +56,7 @@ def assert_obj_close(actual, desired, rtol=1e-7, atol = 0, context = 'tested_obj
         pass
 
     if isinstance(actual, dict) and isinstance(desired, dict):
-        for key, val in actual.iteritems():
+        for key, val in actual.items():
             assert_obj_close(actual[key], desired[key], context = '{0}[{1}]'.format(context, key),
                              rtol = rtol, atol = atol)
     elif hasattr(actual, '_dict') and hasattr(desired, '_dict'):
@@ -80,18 +80,18 @@ def assert_obj_close(actual, desired, rtol=1e-7, atol = 0, context = 'tested_obj
 
 def assert_method_equal(actual, desired, context):
     # Check that the functions are the same
-    assert_equal(actual.im_func.func_name, desired.im_func.func_name, err_msg=context)
+    assert_equal(actual.__func__.__name__, desired.__func__.__name__, err_msg=context)
 
     # check that the objects are the same
 
     # We want to treat Mie.calc_holo and Mie().calc_holo as equal, this code
     # here instantiates a class if possible so these match
-    act_obj = actual.im_self
+    act_obj = actual.__self__
     try:
         act_obj = act_obj()
     except TypeError:
         pass
-    des_obj = desired.im_self
+    des_obj = desired.__self__
     try:
         des_obj = des_obj()
     except TypeError:
@@ -117,7 +117,7 @@ def verify(result, name, rtol=1e-7, atol=1e-8):
     if isinstance(result, dict):
         assert_obj_close(result, gold_yaml, rtol, atol)
     else:
-        for key, val in gold_yaml.iteritems():
+        for key, val in gold_yaml.items():
             assert_almost_equal(getattr(result, key)(), val, decimal=int(-np.log10(rtol)))
 
 # TODO: update me
@@ -157,7 +157,7 @@ def make_golds(result, name, moveto=None):
         shutil.move(simple_checks, gold_dir)
         shutil.move(gold_name, full_dir)
     else:
-        print('move {0} to the gold/ directory, and {1} to the gold/full_data/ '
+        print(('move {0} to the gold/ directory, and {1} to the gold/full_data/ '
               'directory to regold your local test.  You should also see about '
               'getting the full data somewhere useful for fetching by '
-              'others'.format(simple_checks, gold_name))
+              'others'.format(simple_checks, gold_name)))

@@ -24,14 +24,14 @@ as Clusters.
 .. moduleauthor:: Vinothan N. Manoharan <vnm@seas.harvard.edu>
 .. moduleauthor:: Thomas G. Dimiduk <tdimidusk@physics.harvard.edu>
 '''
-from __future__ import division
+
 
 from .scatterer import Scatterer, Indicators
-import scatterer
+from . import scatterer
 
 from .sphere import Sphere
 from .composite import Scatterers
 from .spherecluster import Spheres
 from .janus import JanusSphere
 from .ellipsoid import Ellipsoid
-from csg import Union, Difference, Intersection
+from .csg import Union, Difference, Intersection

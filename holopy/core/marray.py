@@ -24,16 +24,16 @@ specified.
 .. moduleauthor:: Tom Dimiduk <tdimiduk@physics.harvard.edu>
 .. moduleauthor:: Vinothan N. Manoharan <vnm@seas.harvard.edu>
 """
-from __future__ import division
+
 
 import warnings
 import copy
 import numpy as np
 import scipy.signal
-from errors import UnspecifiedPosition
-from .holopy_object import HoloPyObject
-from .metadata import Angles, Positions
-from .helpers import _ensure_pair, _ensure_array, dict_without, ensure_3d, is_none
+from holopy.core.errors import UnspecifiedPosition
+from holopy.core.holopy_object import HoloPyObject
+from holopy.core.metadata import Angles, Positions
+from holopy.core.helpers import _ensure_pair, _ensure_array, dict_without, ensure_3d, is_none
 import inspect
 
 def zeros_like(obj, dtype=None):
@@ -131,7 +131,7 @@ def _describe_init_signature(cls):
         be used to 'upcast' the array.  For downcasting, use the
         .astype(t) method."""}
 
-    for key, val in attrs.iteritems():
+    for key, val in list(attrs.items()):
         if val[0] == '\n':
             val = val[1:]
         # This lets us referr to the class's name as {name} in the attribute
@@ -219,7 +219,7 @@ class Schema(HoloPyObject):
         if isinstance(self, np.ndarray):
             newdict = dict_without(newdict, 'shape')
 
-        for key, item in newdict.iteritems():
+        for key, item in newdict.items():
             setattr(self, key, item)
 
 
@@ -274,7 +274,7 @@ class Marray(np.ndarray, Schema):
     def __array_finalize__(self, obj):
         # this function finishes the construction of our new object by copying
         # over the metadata
-        for key, item in getattr(obj, '__dict__', {}).iteritems():
+        for key, item in getattr(obj, '__dict__', {}).items():
             setattr(self, key, item)
 
 
@@ -293,7 +293,7 @@ class Marray(np.ndarray, Schema):
 
     def __repr__(self):
         keywpairs = ["{0}={1}".format(k[0], repr(k[1])) for k in
-                     self._dict.iteritems()]
+                     self._dict.items()]
         # we want te print numpy's repr
         arr = np.ndarray.__repr__(self)
         # but take out the class name since we are including it ourself

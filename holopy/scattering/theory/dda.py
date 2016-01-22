@@ -26,7 +26,7 @@ ADDA (http://code.google.com/p/a-dda/) to do DDA calculations.
 #(values are too small), so we should probably nondimensionalize before talking
 #to adda.
 
-from __future__ import division
+
 
 import numpy as np
 import subprocess
@@ -227,7 +227,7 @@ class DDA(ScatteringTheory):
             fields[i] = mieangfuncs.fieldstocart(escat_sph, theta, phi)
 
         if self.keep_raw_calculations:
-            print("Raw calculations are in: {0}".format(temp_dir))
+            print(("Raw calculations are in: {0}".format(temp_dir)))
         else:
             shutil.rmtree(temp_dir)
 

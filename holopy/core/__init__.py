@@ -38,10 +38,10 @@ Main use cases are
 
 """
 
-from marray import (Marray, Image, Schema, ImageSchema, Volume,
+from holopy.core.marray import (Marray, Image, Schema, ImageSchema, Volume,
                     VolumeSchema, VectorGrid, VectorGridSchema,
                     subimage)
-from metadata import Optics, Grid, Angles, UnevenGrid
-from io import load, load_image, save
-import process
-import helpers
+from holopy.core.metadata import Optics, Grid, Angles, UnevenGrid
+import holopy.core.process
+import holopy.core.helpers
+from holopy.core.io import load, load_image, save

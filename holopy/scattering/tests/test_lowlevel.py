@@ -34,7 +34,7 @@ down the problem.
 .. moduleauthor:: Jerome Fung <fung@physics.harvard.edu>
 '''
 
-from __future__ import division
+
 
 import os
 import yaml

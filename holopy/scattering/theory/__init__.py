@@ -28,11 +28,11 @@ All theories have a common interface defined by
 .. moduleauthor:: Rebecca W. Perry <rperry@seas.harvard.edu>
 .. moduleauthor:: Vinothan N. Manoharan <vnm@seas.harvard.edu>
 '''
-from __future__ import division
+
 
 try:
-    from mie import Mie
-    from multisphere import Multisphere
+    from .mie import Mie
+    from .multisphere import Multisphere
 except ImportError:
     import warnings
     warnings.warn("""
@@ -43,6 +43,6 @@ This is probably due to your not having properly compiled versions holopy's
 fortran bits.  """)
 
 try:
-    from dda import DDA
+    from .dda import DDA
 except ImportError:
     pass

@@ -36,7 +36,7 @@ sphere," Applied Optics 42, 1710-1720, (1993).
 .. moduleauthor:: Jerome Fung <fung@physics.harvard.edu>
 """
 
-from __future__ import division
+
 
 import numpy as np
 from numpy import array, sin, cos, zeros, arange, real, imag, exp

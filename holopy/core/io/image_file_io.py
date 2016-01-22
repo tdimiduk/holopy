@@ -22,7 +22,7 @@ image file formats used for holograms.
 .. moduleauthor:: Jerome Fung <jfung@physics.harvard.edu>
 .. moduleauthor:: Tom Dimiduk <tdimiduk@physics.harvard.edu>
 """
-from __future__ import division
+
 
 import numpy as np
 import scipy as sp
@@ -41,7 +41,7 @@ import warnings
 from copy import copy
 import json
 from scipy.misc import fromimage, bytescale
-from holopy.core.third_party.tifffile import TIFFfile
+import tifffile
 from holopy.core import Image
 
 def save_image(filename, im, scaling='auto', depth=8):
@@ -173,7 +173,7 @@ def _read_tiff(filename):
     (should fix this in the future so that all tiffs can be opened by
     tifffile)
     """
-    tif = TIFFfile(filename)
+    tif = tifffile.TIFFfile(filename)
 
     might_be_color = True
     if len(tif.pages) > 1:

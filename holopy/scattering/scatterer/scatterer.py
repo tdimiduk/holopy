@@ -21,7 +21,7 @@ The abstract base class for all scattering objects
 
 .. moduleauthor:: Thomas G. Dimiduk <tdimiduk@physics.harvard.edu>
 '''
-from __future__ import division
+
 from collections import defaultdict
 
 from ...core.helpers import OrderedDict
@@ -34,6 +34,7 @@ import numpy as np
 from ...core.holopy_object  import HoloPyObject
 from ...core.helpers import _ensure_array
 from ..errors import ScattererDefinitionError
+from functools import reduce
 
 
 class Scatterer(HoloPyObject):
@@ -230,7 +231,7 @@ class CenteredScatterer(Scatterer):
                 return [(key, par)]
 
         return OrderedDict(sorted(chain(*[expand(*p) for p in
-                                          self._dict.iteritems()])))
+                                          self._dict.items()])))
 
     @classmethod
     def from_parameters(cls, parameters):
@@ -253,7 +254,7 @@ class CenteredScatterer(Scatterer):
 
         collected = defaultdict(dict)
 
-        for key, val in parameters.iteritems():
+        for key, val in parameters.items():
             tok = key.split('.', 1)
             if len(tok) > 1:
                 collected[tok[0]][tok[1]] = val
@@ -261,7 +262,7 @@ class CenteredScatterer(Scatterer):
                 collected[key] = val
 
         collected_arrays = defaultdict(dict)
-        for key, val in collected.iteritems():
+        for key, val in collected.items():
             tok = key.split('[', 1)
             if len(key.split('[', 1)) > 1:
                 sub_key, n = key.split('[', 1)
@@ -275,13 +276,13 @@ class CenteredScatterer(Scatterer):
         def build(par):
             if isinstance(par, dict):
                 reduce(lambda x, i: isinstance(i, int) and x,
-                       par.keys(), True)
-                d = [p[1] for p in sorted(par.iteritems(), key =
+                       list(par.keys()), True)
+                d = [p[1] for p in sorted(iter(par.items()), key =
                                           lambda x: x[0])]
                 return [build(p) for p in d]
             return par
 
-        for key, val in collected_arrays.iteritems():
+        for key, val in collected_arrays.items():
             built[key] = build(val)
 
         return cls(**built)
