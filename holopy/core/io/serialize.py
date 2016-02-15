@@ -32,6 +32,7 @@ from yaml.reader import ReaderError
 import re
 import inspect
 import types
+import codecs
 
 from holopy.core.helpers import OrderedDict, is_none
 from holopy.core.holopy_object import SerializableMetaclass
@@ -55,17 +56,17 @@ def save(outf, obj):
 
 def load(inf):
     if isinstance(inf, str):
-        inf = open(inf, mode = 'r')
+        inf = open(inf, mode = 'rb')
 
     line = inf.readline()
-    cls = line.strip('{} !\n')
+    cls = line.strip(b'{} !\n').decode('utf-8')
     lines = []
     if hasattr(marray, cls) and issubclass(getattr(marray, cls), Marray):
-        while not re.search('!NpyBinary', line):
+        while not re.search(b'!NpyBinary', line):
             lines.append(line)
             line = inf.readline()
         arr = np.load(inf)
-        head = ''.join(lines[1:])
+        head = b''.join(lines[1:])
         kwargs = yaml.load(head)
         if kwargs is None:
             kwargs = {} #pragma: nocover
