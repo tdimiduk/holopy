@@ -52,8 +52,12 @@ class Sphere(CenteredScatterer):
         self.r = r
         super(Sphere, self).__init__(center)
 
-        if self.r < 0:
-            raise ScattererDefinitionError("radius is negative", self)
+        try:
+            if self.r < 0:
+                raise ScattererDefinitionError("radius is negative", self)
+        except TypeError:
+            if self.r.guess < 0:
+                raise ScattererDefinitionError("radius guess is negative", self)
 
     @property
     def indicators(self):
