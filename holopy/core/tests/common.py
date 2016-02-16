@@ -32,7 +32,8 @@ from ..io import get_example_data, get_example_data_path
 
 # tests should fail if they give warnings
 import warnings
-warnings.simplefilter("error")
+#warnings.simplefilter("error")
+
 
 
 from numpy.testing import assert_allclose
