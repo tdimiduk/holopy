@@ -151,7 +151,7 @@ def load_image(filename, channel=None, spacing=None, optics=None):
                 "The image doesn't have a channel number {0}".format(channel))
         else:
             arr = arr[:, :, channel]
-    elif channel > 0:
+    elif channel is not None and channel > 0:
         warnings.warn("Warning: not a color image (channel number ignored)")
 
     metadata = json.loads(description)

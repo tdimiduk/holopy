@@ -41,7 +41,7 @@ def test_hologram_io():
 
 @attr('fast')
 def test_load_optics():
-    optics_yaml = """wavelen: 785e-9
+    optics_yaml = b"""wavelen: 785e-9
 polarization: [1.0, 0]
 divergence: 0
 pixel_size: [6.8e-6, 6.8e-6]

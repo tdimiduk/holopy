@@ -41,7 +41,7 @@ from holopy.core import marray
 
 def save(outf, obj):
     if isinstance(outf, str):
-        outf = open(outf, 'wb')
+        outf = open(outf, 'w')
 
     yaml.dump(obj, outf)
     if isinstance(obj, Marray):

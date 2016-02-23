@@ -71,7 +71,7 @@ def load(inf, spacing = None, optics = None):
     try:
         loaded = serialize.load(inf)
         loaded_yaml = True
-    except serialize.ReaderError:
+    except (serialize.ReaderError, UnicodeDecodeError):
         pass
 
 
