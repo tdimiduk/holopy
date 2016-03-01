@@ -94,7 +94,7 @@ def test_image_io():
         assert_obj_close(h.optics, optics)
         assert_equal(h.spacing, spacing)
         assert_equal(len(w), 1)
-        assert "Overriding spacing and optics of loaded yaml" in w[-1].message
+        assert "Overriding spacing and optics of loaded yaml" in str(w[-1].message)
 
 
     with warnings.catch_warnings(record =True) as w:
@@ -105,7 +105,7 @@ def test_image_io():
         assert_equal(len(w), 1)
         assert ("WARNING: overriding optics of loaded yaml without "
                 "overriding spacing, this is probably incorrect." in
-                w[-1].message)
+                str(w[-1].message))
 
 
     with warnings.catch_warnings(record =True) as w:
@@ -116,7 +116,7 @@ def test_image_io():
         assert_equal(len(w), 1)
         assert ("WARNING: overriding spacing of loaded yaml without "
                 "overriding optics, this is probably incorrect." in
-                w[-1].message)
+                str(w[-1].message))
 
     shutil.rmtree(t)
 

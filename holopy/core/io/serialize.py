@@ -41,16 +41,17 @@ from holopy.core import marray
 
 def save(outf, obj):
     if isinstance(outf, str):
-        outf = open(outf, 'w')
+        outf = open(outf, 'wb')
 
-    yaml.dump(obj, outf)
+    header = yaml.dump(obj)
+    outf.write(header.encode())
     if isinstance(obj, Marray):
         # yaml saves of large arrays are very slow, so we have numpy save the array
         # parts of Marray objects.  This will mean the file isn't stricktly
         # a valid yaml (or even a valid text file really), but we can still read
         # it, and with the right programs (like linux more) you can still see
         # the text yaml information, and it keeps everything in one file
-        outf.write('array: !NpyBinary\n')
+        outf.write('array: !NpyBinary\n'.encode())
         np.save(outf, obj)
 
 
@@ -66,6 +67,7 @@ def load(inf):
             lines.append(line)
             line = inf.readline()
         arr = np.load(inf)
+        inf.close()
         head = b''.join(lines[1:])
         kwargs = yaml.load(head)
         if kwargs is None:
@@ -76,6 +78,7 @@ def load(inf):
     else:
         inf.seek(0)
         obj = yaml.load(inf)
+        inf.close()
         if isinstance(obj, dict):
             # sometimes yaml doesn't convert strings to floats properly, so we
             # have to check for that.

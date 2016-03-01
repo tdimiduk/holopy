@@ -138,11 +138,7 @@ def _describe_init_signature(cls):
         # documentation snippits above
         attrs[key] = val.format(name = cls.__name__)
 
-    argspec = inspect.getargspec(cls.__init__)
-    # leave off self (the first argument)
-    args = argspec.args[1:]
-    if argspec.keywords is not None:
-        args.append(argspec.keywords)
+    args = [p for p in inspect.signature(cls.__init__).parameters]
 
     attr_sig = "Parameters\n    ----------\n{0}".format(
         '\n'.join([attrs[arg] for arg in args if arg in attrs]))

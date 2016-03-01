@@ -62,7 +62,7 @@ class HoloPyObject(Serializable):
     def _dict(self):
         dump_dict = OrderedDict()
 
-        for var in inspect.getargspec(self.__init__).args[1:]:
+        for var in inspect.signature(self.__init__).parameters:
             if getattr(self, var, None) is not None:
                 item = getattr(self, var)
                 if isinstance(item, np.ndarray) and item.ndim == 1:
